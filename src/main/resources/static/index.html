@@ -15,16 +15,18 @@
         }
 
         :root {
-            --white: #ffffff;
+            --white: #fffaf6;
+            --surface: rgba(255, 255, 255, 0.74);
             --coral: #E07A5F;
-            --coral-light: #F2CC8F;
+            --coral-deep: #cb6549;
             --peach: #F4A261;
+            --coral-light: #FDE8E4;
             --cream: #FFF8F0;
-            --dark: #1a1a1a;
-            --gray: #6b7280;
-            --border: #e5e7eb;
-            --text: #1a1a1a;
-            --text-muted: #9ca3af;
+            --ink: #221915;
+            --gray: #6f625d;
+            --border: rgba(224, 122, 95, 0.18);
+            --shadow: 0 30px 90px rgba(149, 74, 51, 0.14);
+            --shadow-soft: 0 10px 30px rgba(149, 74, 51, 0.10);
         }
 
         html {
@@ -32,216 +34,341 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(244, 162, 97, 0.22), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(224, 122, 95, 0.16), transparent 28%),
+                linear-gradient(135deg, #fff8f4 0%, #fffdfb 50%, #fff4ee 100%);
         }
 
-        /* Animated Background */
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            inset: 0;
             overflow: hidden;
             pointer-events: none;
+            z-index: 0;
         }
 
         .bg-shape {
             position: absolute;
-            border-radius: 50%;
-            opacity: 0.15;
-            animation: floatShape 20s ease-in-out infinite;
+            border-radius: 999px;
+            filter: blur(1px);
+            opacity: 0.55;
+            animation: drift 18s ease-in-out infinite;
         }
 
         .bg-shape:nth-child(1) {
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, var(--coral), var(--peach));
-            top: -200px;
-            left: -200px;
-            animation-delay: 0s;
+            width: 500px;
+            height: 500px;
+            top: -160px;
+            left: -140px;
+            background: linear-gradient(135deg, rgba(224, 122, 95, 0.35), rgba(244, 162, 97, 0.1));
         }
 
         .bg-shape:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            background: linear-gradient(135deg, var(--peach), var(--coral-light));
-            bottom: -100px;
-            right: -100px;
+            width: 360px;
+            height: 360px;
+            right: -120px;
+            top: 8%;
+            background: linear-gradient(135deg, rgba(244, 162, 97, 0.28), rgba(242, 204, 143, 0.12));
             animation-delay: -5s;
         }
 
         .bg-shape:nth-child(3) {
-            width: 300px;
-            height: 300px;
-            background: var(--coral-light);
-            top: 50%;
-            left: 50%;
-            animation-delay: -10s;
+            width: 280px;
+            height: 280px;
+            left: 44%;
+            bottom: -100px;
+            background: linear-gradient(135deg, rgba(242, 204, 143, 0.24), rgba(224, 122, 95, 0.10));
+            animation-delay: -9s;
         }
 
         .bg-shape:nth-child(4) {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, var(--coral-light), var(--peach));
-            top: 20%;
-            right: 10%;
-            animation-delay: -15s;
+            width: 180px;
+            height: 180px;
+            top: 54%;
+            right: 28%;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(224, 122, 95, 0.12);
+            animation-delay: -13s;
         }
 
-        @keyframes floatShape {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            25% {
-                transform: translate(30px, -30px) rotate(5deg) scale(1.05);
-            }
-            50% {
-                transform: translate(-20px, 20px) rotate(-5deg) scale(0.95);
-            }
-            75% {
-                transform: translate(20px, 10px) rotate(3deg) scale(1.02);
-            }
+        @keyframes drift {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            25% { transform: translate3d(24px, -18px, 0) scale(1.04); }
+            50% { transform: translate3d(-16px, 18px, 0) scale(0.97); }
+            75% { transform: translate3d(18px, 8px, 0) scale(1.02); }
         }
 
-        /* Mouse glow */
         .glow {
             position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(224, 122, 95, 0.12) 0%, transparent 70%);
+            width: 420px;
+            height: 420px;
             border-radius: 50%;
+            background: radial-gradient(circle, rgba(224, 122, 95, 0.14) 0%, transparent 68%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
         }
 
-        /* Login Container */
-        .login-container {
+        .page {
             position: relative;
             z-index: 1;
-            text-align: center;
-            max-width: 700px;
-            width: 90%;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 25px 80px rgba(224, 122, 95, 0.15);
-            animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 100vh;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(280px, 1.05fr) minmax(360px, 0.95fr);
+            align-items: center;
+            gap: 28px;
+            padding: 28px;
+            max-width: 1320px;
+            margin: 0 auto;
         }
 
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+        .hero {
+            position: relative;
+            padding: 42px;
+            min-height: 680px;
+            border-radius: 32px;
+            background:
+                linear-gradient(160deg, rgba(255, 248, 240, 0.88), rgba(255, 255, 255, 0.62)),
+                linear-gradient(135deg, rgba(224, 122, 95, 0.16), rgba(244, 162, 97, 0.08));
+            border: 1px solid rgba(224, 122, 95, 0.16);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            backdrop-filter: blur(18px);
+            animation: rise 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .login__logo {
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: auto -20% -35% auto;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 162, 97, 0.22), transparent 68%);
+        }
+
+        .hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(224, 122, 95, 0.14);
+            box-shadow: var(--shadow-soft);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--coral-deep);
+            margin-bottom: 34px;
+        }
+
+        .hero__logo {
+            display: inline-block;
             font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 2rem;
-            font-weight: 500;
-            color: var(--coral);
+            font-size: clamp(3rem, 8vw, 5.2rem);
+            line-height: 0.9;
+            color: var(--ink);
             margin-bottom: 16px;
-            text-decoration: none;
+            letter-spacing: -0.04em;
+        }
+
+        .hero__accent {
+            color: var(--coral);
+        }
+
+        .hero__title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1.03;
+            letter-spacing: -0.03em;
+            max-width: 12ch;
+            margin-bottom: 18px;
+        }
+
+        .hero__subtitle {
+            max-width: 54ch;
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--gray);
+            margin-bottom: 32px;
+        }
+
+        .hero__stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 34px;
+        }
+
+        .stat {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(224, 122, 95, 0.12);
+        }
+
+        .stat__value {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .stat__label {
+            font-size: 0.82rem;
+            color: var(--gray);
+        }
+
+        .hero__features {
+            display: grid;
+            gap: 12px;
+            max-width: 520px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.54);
+            border: 1px solid rgba(224, 122, 95, 0.10);
+        }
+
+        .feature__icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--coral), var(--peach));
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(224, 122, 95, 0.22);
+        }
+
+        .feature__text strong {
+            display: block;
+            font-size: 0.94rem;
+            margin-bottom: 2px;
+        }
+
+        .feature__text span {
+            font-size: 0.84rem;
+            color: var(--gray);
+        }
+
+        .hero__ornament {
+            position: absolute;
+            inset: auto 38px 38px auto;
+            width: 160px;
+            height: 160px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(224, 122, 95, 0.16), rgba(244, 162, 97, 0.06));
+            border: 1px solid rgba(224, 122, 95, 0.12);
+            backdrop-filter: blur(12px);
+            transform: rotate(8deg);
+        }
+
+        .auth {
+            position: relative;
+            padding: 28px;
+        }
+
+        .auth__card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.66);
+            box-shadow: var(--shadow);
+            border-radius: 28px;
+            backdrop-filter: blur(22px);
+            padding: 30px;
+            animation: rise 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s both;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .auth__topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .auth__eyebrow {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--coral-deep);
+        }
+
+        .auth__mini {
+            font-size: 0.84rem;
+            color: var(--gray);
         }
 
         .login__title {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
-            font-weight: 400;
-            color: var(--dark);
-            margin-bottom: 12px;
-            line-height: 1.2;
+            font-size: clamp(2.2rem, 5vw, 3rem);
+            line-height: 1;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
         }
 
         .login__subtitle {
-            font-size: 1rem;
             color: var(--gray);
-            max-width: 350px;
-            margin: 0 auto 32px;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            margin-bottom: 22px;
+            max-width: 44ch;
         }
 
-        /* Login Methods Row */
+        .error-message {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: #b42318;
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.45s ease;
+        }
+
         .login-methods {
-            display: flex;
-            gap: 24px;
-            align-items: stretch;
+            display: grid;
+            gap: 16px;
         }
 
         .login-method {
-            flex: 1;
-            padding: 24px;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            background: var(--white);
+            padding: 20px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(224, 122, 95, 0.14);
+            box-shadow: 0 12px 24px rgba(149, 74, 51, 0.06);
         }
 
         .login-method h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--dark);
+            font-size: 0.96rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--ink);
         }
 
-        /* Form inside login method */
-        .login-method .form-group {
-            margin-bottom: 12px;
-        }
-
-        .login-method .form-input {
-            padding: 10px 14px;
-            font-size: 0.9rem;
-        }
-
-        .login-method .btn-primary {
-            width: 100%;
-            padding: 12px;
-            font-size: 0.9rem;
-        }
-
-        /* Google Button - Full width on right side */
-        .login-method .btn-google {
-            width: 100%;
-            padding: 14px 20px;
-            font-size: 0.9rem;
-        }
-
-        .login-method .signup-text {
-            margin-top: 12px;
-            font-size: 0.8rem;
-        }
-
-        .signup-text {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 12px;
-        }
-
-        .signup-text a {
-            color: var(--coral);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .signup-text a:hover {
-            text-decoration: underline;
-        }
-
-        /* Form Styles */
         .form-group {
             margin-bottom: 12px;
             text-align: left;
@@ -249,135 +376,173 @@
 
         .form-input {
             width: 100%;
-            padding: 10px 14px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.9rem;
+            padding: 13px 15px;
+            border: 1.5px solid rgba(34, 25, 21, 0.10);
+            border-radius: 14px;
+            font-size: 0.95rem;
             font-family: inherit;
-            transition: all 0.2s ease;
-            background: var(--white);
+            transition: all 0.22s ease;
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--ink);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--coral);
-            box-shadow: 0 0 0 4px rgba(224, 122, 95, 0.1);
+            border-color: rgba(224, 122, 95, 0.55);
+            box-shadow: 0 0 0 4px rgba(224, 122, 95, 0.12);
+            transform: translateY(-1px);
         }
 
         .form-input::placeholder {
-            color: var(--text-muted);
+            color: #a89b95;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--coral) 0%, var(--peach) 100%);
-            color: white;
+            padding: 13px 16px;
             border: none;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(224, 122, 95, 0.3);
+            color: white;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--peach) 100%);
+            box-shadow: 0 12px 24px rgba(224, 122, 95, 0.28);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(224, 122, 95, 0.4);
+            box-shadow: 0 18px 34px rgba(224, 122, 95, 0.34);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
+        .btn-primary:disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+            transform: none;
         }
 
-        /* Google Button */
         .btn-google {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             width: 100%;
-            padding: 14px 20px;
-            background: var(--white);
-            color: var(--dark);
+            padding: 13px 16px;
+            border-radius: 14px;
+            border: 1.5px solid rgba(34, 25, 21, 0.10);
+            background: rgba(255, 255, 255, 0.90);
+            color: var(--ink);
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 12px;
-            border: 2px solid var(--border);
+            font-weight: 700;
+            font-size: 0.94rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 10px 18px rgba(149, 74, 51, 0.08);
         }
 
         .btn-google:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            border-color: var(--coral);
+            border-color: rgba(224, 122, 95, 0.42);
+            box-shadow: 0 16px 28px rgba(149, 74, 51, 0.12);
         }
 
-        .btn-google svg {
-            transition: transform 0.3s ease;
-        }
-
-        .btn-google:hover svg {
-            transform: scale(1.1);
-        }
-
-        /* Loading state */
         .btn-google.loading {
             pointer-events: none;
-            opacity: 0.7;
+            opacity: 0.82;
         }
 
         .btn-google.loading svg {
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .signup-text {
+            font-size: 0.84rem;
+            color: var(--gray);
+            margin-top: 12px;
         }
 
-        /* Error message */
-        .error-message {
-            background: #fef2f2;
-            color: #ef4444;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            margin-bottom: 16px;
-            display: none;
+        .signup-text a {
+            color: var(--coral-deep);
+            font-weight: 600;
+            text-decoration: none;
         }
 
-        .error-message.show {
-            display: block;
-            animation: shake 0.5s ease;
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        .auth__footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(224, 122, 95, 0.12);
+            color: var(--gray);
+            font-size: 0.82rem;
+        }
+
+        .auth__footer strong {
+            color: var(--ink);
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .login-methods {
-                flex-direction: column;
-                gap: 16px;
+        @media (max-width: 1080px) {
+            .page {
+                grid-template-columns: 1fr;
+                gap: 18px;
             }
 
-            .login-container {
-                padding: 24px;
+            .hero {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                padding: 16px;
+            }
+
+            .hero,
+            .auth {
+                padding: 0;
+            }
+
+            .hero {
+                border-radius: 24px;
+                padding: 28px 22px;
+            }
+
+            .auth__card {
+                padding: 22px 18px;
+                border-radius: 24px;
+            }
+
+            .hero__stats {
+                grid-template-columns: 1fr;
+            }
+
+            .auth__topline {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .hero__ornament {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
     <div class="bg-animation">
         <div class="bg-shape"></div>
         <div class="bg-shape"></div>
@@ -385,57 +550,113 @@
         <div class="bg-shape"></div>
     </div>
 
-    <!-- Mouse Glow Effect -->
     <div class="glow" id="glow"></div>
 
-    <!-- Login Container -->
-    <div class="login-container">
-        <a href="/" class="login__logo">Workspace</a>
+    <main class="page">
+        <section class="hero" aria-label="Welcome panel">
+            <div class="hero__badge">Coral workspace · calm productivity</div>
+            <div class="hero__logo">Work<span class="hero__accent">space</span></div>
+            <h1 class="hero__title">Keep your day light, focused, and beautifully organized.</h1>
+            <p class="hero__subtitle">A refined home for your tasks, reminders, and quick ideas — designed to feel warm, fast, and effortless while keeping the coral-peach identity you already have.</p>
 
-        <h1 class="login__title">Welcome back</h1>
-        <p class="login__subtitle">Sign in to access your tasks and stay organized</p>
-
-        <div class="error-message" id="errorMessage"></div>
-
-        <div class="login-methods">
-            <!-- Email/Password Login -->
-            <div class="login-method">
-                <h3 id="emailFormTitle">Sign in with Email</h3>
-                <form id="loginForm" onsubmit="handleEmailAuth(event)">
-                    <div class="form-group" id="nameFieldGroup" style="display:none;">
-                        <input type="text" id="name" class="form-input" placeholder="Your name">
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" class="form-input" placeholder="Email address" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="password" class="form-input" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="btn-primary" id="emailSubmitBtn">Sign In</button>
-                </form>
-                <p class="signup-text" id="toggleAuthText">
-                    Don't have an account? <a href="#" onclick="toggleAuthMode(); return false;">Sign up</a>
-                </p>
+            <div class="hero__stats">
+                <div class="stat">
+                    <span class="stat__value">Fast</span>
+                    <span class="stat__label">sign in flow</span>
+                </div>
+                <div class="stat">
+                    <span class="stat__value">Voice</span>
+                    <span class="stat__label">to task AI</span>
+                </div>
+                <div class="stat">
+                    <span class="stat__value">Calm</span>
+                    <span class="stat__label">visual tone</span>
+                </div>
             </div>
 
-            <!-- Google Sign In -->
-            <div class="login-method">
-                <h3>Sign in with Google</h3>
-                <button class="btn-google" id="googleLoginBtn" onclick="loginWithGoogle()">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span>Continue with Google</span>
-                </button>
-                <p class="signup-text">
-                    Or <a href="#" onclick="loginWithGoogle(); return false;">sign up with Google</a>
-                </p>
+            <div class="hero__features">
+                <div class="feature">
+                    <div class="feature__icon">✓</div>
+                    <div class="feature__text">
+                        <strong>Quick access</strong>
+                        <span>Sign in with email/password or Google in one clean flow.</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature__icon">◌</div>
+                    <div class="feature__text">
+                        <strong>Soft motion</strong>
+                        <span>Gentle gradients, floating shapes, and subtle depth — no clutter.</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature__icon">↗</div>
+                    <div class="feature__text">
+                        <strong>Built for focus</strong>
+                        <span>Everything leads smoothly into your task dashboard.</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+
+            <div class="hero__ornament"></div>
+        </section>
+
+        <section class="auth" aria-label="Authentication panel">
+            <div class="auth__card">
+                <div class="auth__topline">
+                    <div class="auth__eyebrow">Sign in</div>
+                    <div class="auth__mini">Warm coral UI, rebuilt</div>
+                </div>
+
+                <h2 class="login__title">Welcome back</h2>
+                <p class="login__subtitle">Sign in to access your tasks and stay organized.</p>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <div class="login-methods">
+                    <div class="login-method">
+                        <h3 id="emailFormTitle">Sign in with Email</h3>
+                        <form id="loginForm" onsubmit="handleEmailAuth(event)">
+                            <div class="form-group" id="nameFieldGroup" style="display:none;">
+                                <input type="text" id="name" class="form-input" placeholder="Your name" autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" class="form-input" placeholder="Email address" autocomplete="email" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="password" class="form-input" placeholder="Password" autocomplete="current-password" required>
+                            </div>
+                            <button type="submit" class="btn-primary" id="emailSubmitBtn">Sign In</button>
+                        </form>
+                        <p class="signup-text" id="toggleAuthText">
+                            Don't have an account? <a href="#" onclick="toggleAuthMode(); return false;">Sign up</a>
+                        </p>
+                    </div>
+
+                    <div class="login-method">
+                        <h3>Sign in with Google</h3>
+                        <button class="btn-google" id="googleLoginBtn" onclick="loginWithGoogle()">
+                            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>Continue with Google</span>
+                        </button>
+                        <p class="signup-text">
+                            Or <a href="#" onclick="loginWithGoogle(); return false;">sign up with Google</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="auth__footer">
+                    <span><strong>Tip:</strong> Use the same email for reminders.</span>
+                    <span>Secure session login</span>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
         // Mouse glow effect
@@ -471,6 +692,13 @@
             }
         }
 
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+        }
+
         // Handle email login - redirect to Google sign in
         let isSignUp = false;
 
@@ -496,20 +724,21 @@
 
         async function handleEmailAuth(event) {
             event.preventDefault();
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
-            const errorEl = document.getElementById('errorMessage');
+            const name = document.getElementById('name').value.trim();
+            const submitBtn = document.getElementById('emailSubmitBtn');
 
             if (!email || !password) {
-                errorEl.textContent = 'Email và password không được trống.';
-                errorEl.classList.add('show');
-                setTimeout(() => errorEl.classList.remove('show'), 3000);
+                showError('Email và password không được trống.');
                 return;
             }
 
             const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login';
             const body = isSignUp ? { email, password, name } : { email, password };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = isSignUp ? 'Signing up...' : 'Signing in...';
 
             try {
                 const res = await fetch(endpoint, {
@@ -518,27 +747,32 @@
                     credentials: 'include',
                     body: JSON.stringify(body)
                 });
-                const data = await res.json();
 
-                if (data.error) {
-                    errorEl.textContent = data.error;
-                    errorEl.classList.add('show');
-                    setTimeout(() => errorEl.classList.remove('show'), 3000);
+                const contentType = res.headers.get('content-type') || '';
+                let payload = null;
+                if (contentType.includes('application/json')) {
+                    payload = await res.json();
                 } else {
-                    window.location.href = '/app';
+                    const text = await res.text();
+                    throw new Error(text.includes('<!DOCTYPE') ? 'Server trả về trang HTML thay vì JSON. Kiểm tra endpoint /api/auth.' : text || 'Server response is not JSON');
                 }
+
+                if (!res.ok || payload.error) {
+                    throw new Error(payload.error || 'Authentication failed');
+                }
+
+                window.location.href = '/app';
             } catch (e) {
-                errorEl.textContent = 'Đã xảy ra lỗi. Thử lại.';
-                errorEl.classList.add('show');
-                setTimeout(() => errorEl.classList.remove('show'), 3000);
+                showError(e.message || 'Đã xảy ra lỗi. Thử lại.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
             }
         }
 
         // Login with Google
-        async function loginWithGoogle() {
+        function loginWithGoogle() {
             const btn = document.getElementById('googleLoginBtn');
-            const errorEl = document.getElementById('errorMessage');
-
             btn.classList.add('loading');
             btn.innerHTML = `
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -547,35 +781,8 @@
                 </svg>
                 <span>Redirecting...</span>
             `;
-            errorEl.classList.remove('show');
-
-            try {
-                // Get Google OAuth URL
-                const googleUrlResponse = await fetch('/api/auth/google-url');
-                const googleUrlData = await googleUrlResponse.json();
-
-                if (googleUrlData.error) {
-                    throw new Error(googleUrlData.error);
-                }
-
-                // Redirect to Google
-                window.location.href = googleUrlData.url;
-            } catch (error) {
-                btn.classList.remove('loading');
-                btn.innerHTML = `
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span>Continue with Google</span>
-                `;
-                errorEl.textContent = 'Failed to connect to Google. Please try again.';
-                errorEl.classList.add('show');
-            }
+            window.location.href = '/oauth2/authorization/google';
         }
-
 
         // Check for error in URL (OAuth callback error)
         const urlParams = new URLSearchParams(window.location.search);

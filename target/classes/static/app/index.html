@@ -694,12 +694,21 @@
         .fab-voice.recording {
             background: #ef4444;
             border-color: #ef4444;
+            animation: voicePulse 1.4s ease-in-out infinite;
+        }
+
+        .fab-voice.processing {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            animation: voicePulse 1.4s ease-in-out infinite;
         }
 
         .voice-idle { display: flex; }
         .voice-bars { display: none; align-items: flex-end; gap: 3px; height: 20px; }
         .fab-voice.recording .voice-idle { display: none; }
         .fab-voice.recording .voice-bars { display: flex; }
+        .fab-voice.processing .voice-idle { display: none; }
+        .fab-voice.processing .voice-bars { display: flex; }
 
         .vbar {
             display: block;
@@ -804,6 +813,12 @@
             border-color: var(--primary);
         }
 
+        .voice-dialog__actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
         .voice-dialog__btn {
             width: 100%;
             padding: 11px;
@@ -819,6 +834,12 @@
 
         .voice-dialog__btn:hover {
             opacity: 0.9;
+        }
+
+        .voice-dialog__btn.secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
         /* Modal */
@@ -1244,7 +1265,7 @@
             </div>
 
             <div class="tasks" id="taskList">
-                <div class="loading">Loading tasks...</div>
+                <div class="loading" id="taskLoading">Loading tasks...</div>
             </div>
 
             <div class="empty" id="emptyState" style="display: none;">
@@ -1283,9 +1304,12 @@
                 <span>✍️ Mô tả task của bạn</span>
                 <button onclick="document.getElementById('voiceDialog').classList.remove('open')" style="background:none;border:none;cursor:pointer;font-size:1.2rem;">✕</button>
             </div>
-            <p class="voice-dialog__hint">Ghi âm không khả dụng. Gõ nội dung task, AI sẽ tự parse thành form.</p>
-            <textarea id="voiceTextInput" class="voice-dialog__input" placeholder="VD: Họp team sáng thứ 2 lúc 9 giờ, ưu tiên cao, ghi chú mang laptop" rows="3"></textarea>
-            <button class="voice-dialog__btn" onclick="submitVoiceText()">🤖 Parse bằng AI</button>
+            <p class="voice-dialog__hint">Ghi âm không khả dụng. Gõ nội dung task, AI sẽ tự parse thành form hoặc tạo luôn.</p>
+            <textarea id="voiceTextInput" class="voice-dialog__input" placeholder="VD: Họp team sáng thứ 2 lúc 9 giờ, ưu tiên cao, cần mang laptop" rows="3"></textarea>
+            <div class="voice-dialog__actions">
+                <button class="voice-dialog__btn secondary" onclick="submitVoiceText(true)">Tạo luôn</button>
+                <button class="voice-dialog__btn" onclick="submitVoiceText(false)">Xem trước</button>
+            </div>
         </div>
     </div>
 
@@ -1386,6 +1410,7 @@
 
         // DOM Elements
         const taskList = document.getElementById('taskList');
+        const taskLoading = document.getElementById('taskLoading');
         const emptyState = document.getElementById('emptyState');
         const modalOverlay = document.getElementById('modalOverlay');
         const taskForm = document.getElementById('taskForm');
@@ -1408,12 +1433,12 @@
                 authData = await authResponse.json();
 
                 if (!authData.authenticated) {
-                    window.location.href = '/auth/login';
+                    window.location.href = '/';
                     return;
                 }
             } catch (e) {
                 console.error('Init auth error:', e);
-                window.location.href = '/auth/login';
+                window.location.href = '/';
                 return;
             }
 
@@ -1429,8 +1454,11 @@
 
             // Setup logout handler
             document.getElementById('logoutBtn').addEventListener('click', async () => {
-                await fetch('/logout', { method: 'POST', credentials: 'include' });
-                window.location.href = '/auth/login';
+                try {
+                    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                } finally {
+                    window.location.href = '/';
+                }
             });
 
             await loadTasks();
@@ -1443,17 +1471,22 @@
         // API Calls
         async function loadTasks() {
             try {
+                if (taskLoading) taskLoading.style.display = 'block';
                 const response = await fetch(API_BASE, { credentials: 'include' });
                 if (response.status === 401) {
-                    window.location.href = '/auth/login';
+                    window.location.href = '/';
                     return;
                 }
-                if (response.ok) {
-                    tasks = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Failed to load tasks (${response.status})`);
                 }
+                tasks = await response.json();
             } catch (error) {
                 console.error('Failed to load tasks:', error);
                 tasks = [];
+                showToast('⚠️ Không tải được danh sách task.');
+            } finally {
+                if (taskLoading) taskLoading.style.display = 'none';
             }
         }
 
@@ -1464,7 +1497,11 @@
                 credentials: 'include',
                 body: JSON.stringify(taskData)
             });
-            return await response.json();
+            const payload = await response.json();
+            if (!response.ok) {
+                throw new Error(payload.error || 'Create task failed');
+            }
+            return payload;
         }
 
         async function updateTask(id, taskData) {
@@ -1474,7 +1511,11 @@
                 credentials: 'include',
                 body: JSON.stringify(taskData)
             });
-            return await response.json();
+            const payload = await response.json();
+            if (!response.ok) {
+                throw new Error(payload.error || 'Update task failed');
+            }
+            return payload;
         }
 
         async function deleteTaskApi(id) {
@@ -1737,9 +1778,8 @@
         }
 
         // Toggle complete
-        async function toggleComplete(id) {
+        async function toggleComplete(id, event) {
             const task = tasks.find(t => t.id === id);
-            const event = window.event;
 
             if (!task) return;
 
@@ -1821,6 +1861,7 @@
         // Render tasks with staggered animation
         function renderTasks() {
             let filtered = [...tasks];
+            if (taskLoading) taskLoading.style.display = 'none';
 
             const now = new Date();
             const today = new Date();
@@ -1885,7 +1926,7 @@
 
                     return `
                         <div class="task ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}" data-task-id="${task.id}" style="animation-delay: ${index * 50}ms">
-                            <div class="task__checkbox ${task.completed ? 'checked' : ''}" onclick="toggleComplete(${task.id})">
+                            <div class="task__checkbox ${task.completed ? 'checked' : ''}" onclick="toggleComplete(${task.id}, event)" role="button" tabindex="0" aria-label="Toggle task completion">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                                     <polyline points="20,6 9,17 4,12"/>
                                 </svg>
@@ -1934,13 +1975,13 @@
                                 ` : ''}
                             </div>
                             <div class="task__actions">
-                                <button class="task__action" onclick="openEditModal(tasks.find(t => t.id === ${task.id}))">
+                                <button class="task__action" onclick="openEditModal(tasks.find(t => t.id === ${task.id}))" aria-label="Edit task">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
                                 </button>
-                                <button class="task__action delete" onclick="deleteTask(${task.id})">
+                                <button class="task__action delete" onclick="deleteTask(${task.id})" aria-label="Delete task">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3,6 5,6 21,6"/>
                                         <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -2082,22 +2123,38 @@
         let animationId = null;
         let micStream = null;
 
+        function showVoiceState(state, message = '') {
+            const btn = document.getElementById('voiceBtn');
+            if (!btn) return;
+
+            btn.classList.remove('recording', 'processing');
+            if (state === 'recording') btn.classList.add('recording');
+            if (state === 'processing') btn.classList.add('processing');
+
+            if (message) {
+                btn.setAttribute('title', message);
+            } else {
+                btn.setAttribute('title', 'Ghi âm → tạo task');
+            }
+        }
+
         function startVoiceCapture() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 showToast('⚠️ Trình duyệt không hỗ trợ ghi âm. Dùng Chrome/Edge.');
+                openVoiceDialog();
                 return;
             }
 
             const btn = document.getElementById('voiceBtn');
-            if (btn.classList.contains('recording')) return;
+            if (btn.classList.contains('recording') || btn.classList.contains('processing')) return;
 
             const recognition = new SpeechRecognition();
             recognition.lang = 'vi-VN';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
-            btn.classList.add('recording');
+            showVoiceState('recording', '🎙️ Đang ghi âm...');
             showToast('🎙️ Đang ghi âm... Nói nội dung task của bạn', 10000);
 
             // Start volume visualization
@@ -2108,30 +2165,37 @@
             recognition.onresult = async (event) => {
                 const transcript = event.results[0][0].transcript;
                 stopVolumeVisualization();
-                btn.classList.remove('recording');
-                await parseVoiceToTask(transcript);
+                showVoiceState('processing', '🤖 AI đang xử lý...');
+                await parseVoiceToTask(transcript, { autoCreate: false });
             };
 
             recognition.onerror = (event) => {
                 stopVolumeVisualization();
-                btn.classList.remove('recording');
                 if (event.error === 'network' || event.error === 'service-not-allowed') {
                     openVoiceDialog();
+                    showToast('⚠️ Không thể ghi âm trực tiếp. Bạn có thể nhập text để AI xử lý.');
                 } else if (event.error === 'not-allowed') {
                     showToast('❌ Cần cấp quyền micro trong trình duyệt.');
                 } else {
                     openVoiceDialog();
+                    showToast('⚠️ Ghi âm gặp lỗi. Hãy thử nhập text thay thế.');
                 }
+                showVoiceState('idle');
             };
 
             recognition.onend = () => {
                 stopVolumeVisualization();
-                btn.classList.remove('recording');
+                if (!btn.classList.contains('processing')) {
+                    showVoiceState('idle');
+                }
             };
         }
 
         async function startVolumeVisualization() {
             try {
+                if (!navigator.mediaDevices?.getUserMedia) {
+                    return;
+                }
                 micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
@@ -2181,7 +2245,8 @@
             }
             // Reset bars
             ['vbar1','vbar2','vbar3','vbar4'].forEach(id => {
-                document.getElementById(id).style.height = '4px';
+                const el = document.getElementById(id);
+                if (el) el.style.height = '4px';
             });
         }
 
@@ -2189,6 +2254,7 @@
             const dialog = document.getElementById('voiceDialog');
             const input = document.getElementById('voiceTextInput');
             dialog.classList.add('open');
+            showVoiceState('idle');
             setTimeout(() => input.focus(), 100);
         }
 
@@ -2198,49 +2264,113 @@
             }
         }
 
-        async function submitVoiceText() {
+        async function submitVoiceText(autoCreate = false) {
             const input = document.getElementById('voiceTextInput');
             const text = input.value.trim();
             if (!text) return;
             document.getElementById('voiceDialog').classList.remove('open');
             input.value = '';
-            await parseVoiceToTask(text);
+            await parseVoiceToTask(text, { autoCreate });
         }
 
         // Allow Enter to submit voice text dialog
         document.getElementById('voiceTextInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                submitVoiceText();
+                submitVoiceText(false);
             }
         });
 
-        async function parseVoiceToTask(transcript) {
-            showToast(`🤖 Đang xử lý: "${transcript}"...`, 8000);
+        async function parseVoiceToTask(transcript, options = {}) {
+            const normalizedTranscript = (transcript || '').trim();
+            if (!normalizedTranscript) {
+                showToast('❌ Không nhận được nội dung giọng nói. Thử lại nhé.');
+                return;
+            }
+
+            showVoiceState('processing', '🤖 AI đang hiểu nội dung...');
+            showToast(`🤖 Đang xử lý: "${normalizedTranscript}"...`, 8000);
             try {
                 const res = await fetch('/api/ai/parse-task', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ transcript })
+                    body: JSON.stringify({ transcript: normalizedTranscript })
                 });
-                const task = await res.json();
 
-                if (task.error) throw new Error(task.error);
-
-                // Pre-fill and open modal
-                openAddModal();
-                document.getElementById('taskTitle').value = task.title || '';
-                document.getElementById('taskDesc').value = task.description || '';
-                if (task.category) document.getElementById('taskCategory').value = task.category;
-                if (task.priority) document.getElementById('taskPriority').value = task.priority;
-                if (task.deadline) {
-                    document.getElementById('taskDeadline').value = task.deadline.slice(0, 16);
+                const payload = await res.json();
+                if (!res.ok || payload.error) {
+                    throw new Error(payload.error || 'AI parsing failed');
                 }
 
-                showToast('✅ Đã điền thông tin từ giọng nói. Kiểm tra và lưu!');
+                const task = payload.data || payload.note || payload;
+                const deadlineValue = task.deadline ? task.deadline.replace(' ', 'T').slice(0, 16) : '';
+                const subtasks = Array.isArray(task.subtasks) ? task.subtasks : [];
+                const normalizeSubtask = (st) => ({
+                    id: st.id || uuid(),
+                    title: st.title || st.note || '',
+                    completed: !!st.completed
+                });
+
+                if (options.autoCreate) {
+                    const taskData = {
+                        title: task.title || normalizedTranscript,
+                        description: task.description || '',
+                        category: task.category || 'work',
+                        priority: task.priority || 'medium',
+                        deadline: deadlineValue || null,
+                        reminder: null,
+                        subtasks: subtasks.map(normalizeSubtask),
+                        completed: false
+                    };
+                    await createTask(taskData);
+                    await loadTasks();
+                    renderTasks();
+                    updateCounts();
+                    showToast('✅ Đã tạo task từ giọng nói!');
+                    return;
+                }
+
+                const existingDraft = {
+                    title: task.title || '',
+                    description: task.description || '',
+                    category: task.category || 'work',
+                    priority: task.priority || 'medium',
+                    deadline: deadlineValue,
+                    subtasks: subtasks.map(normalizeSubtask)
+                };
+
+                openAddModal();
+                document.getElementById('taskTitle').value = existingDraft.title;
+                document.getElementById('taskDesc').value = existingDraft.description;
+                document.getElementById('taskCategory').value = existingDraft.category;
+                document.getElementById('taskPriority').value = existingDraft.priority;
+                document.getElementById('taskDeadline').value = existingDraft.deadline;
+                currentSubtasks = existingDraft.subtasks.map(st => ({
+                    id: st.id || uuid(),
+                    title: st.title,
+                    completed: !!st.completed
+                }));
+                renderSubtasks();
+
+                const previewText = [
+                    `Tiêu đề: ${existingDraft.title || '(chưa có)'}`,
+                    `Mô tả: ${existingDraft.description || '(trống)'}`,
+                    `Deadline: ${existingDraft.deadline || '(chưa có)'}`,
+                    `Subtasks: ${existingDraft.subtasks.length}`
+                ].join('\n');
+
+                const useAuto = confirm(`${previewText}\n\nBạn muốn lưu luôn task này không?`);
+                if (useAuto) {
+                    await taskForm.requestSubmit();
+                } else {
+                    showToast('✅ Đã điền thông tin từ giọng nói. Kiểm tra và lưu!');
+                }
             } catch (e) {
+                console.error('Voice parse failed:', e);
                 showToast('❌ Không thể xử lý giọng nói: ' + e.message);
+            } finally {
+                showVoiceState('idle');
             }
         }
 

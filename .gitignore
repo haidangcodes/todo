@@ -1,3 +1,18 @@
 .env
 .env.example
 .env.local
+
+# Maven / build output
+target/
+
+# Local SQLite database
+*.db
+*.db-journal
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

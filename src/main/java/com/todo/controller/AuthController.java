@@ -165,4 +165,10 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of("success", true));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok(Map.of("success", true));
+    }
 }

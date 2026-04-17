@@ -74,13 +74,13 @@ public class TaskController {
         if (user == null) {
             return unauthorized();
         }
-        Task existingTask = taskService.getTaskById(id);
-        if (existingTask == null || !existingTask.getUser().getId().equals(user.getId())) {
+        Task existingTask = taskService.getTaskByIdForUser(id, user);
+        if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
         task.setId(id);
         task.setUser(user);
-        return ResponseEntity.ok(taskService.updateTask(id, task));
+        return ResponseEntity.ok(taskService.updateTask(id, task, user));
     }
 
     @DeleteMapping("/{id}")
@@ -89,11 +89,11 @@ public class TaskController {
         if (user == null) {
             return unauthorized();
         }
-        Task existingTask = taskService.getTaskById(id);
-        if (existingTask == null || !existingTask.getUser().getId().equals(user.getId())) {
+        Task existingTask = taskService.getTaskByIdForUser(id, user);
+        if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
-        taskService.deleteTask(id);
+        taskService.deleteTask(id, user);
         return ResponseEntity.noContent().build();
     }
 
@@ -103,11 +103,11 @@ public class TaskController {
         if (user == null) {
             return unauthorized();
         }
-        Task existingTask = taskService.getTaskById(id);
-        if (existingTask == null || !existingTask.getUser().getId().equals(user.getId())) {
+        Task existingTask = taskService.getTaskByIdForUser(id, user);
+        if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(taskService.toggleComplete(id));
+        return ResponseEntity.ok(taskService.toggleComplete(id, user));
     }
 
     @GetMapping("/filter/{filter}")
