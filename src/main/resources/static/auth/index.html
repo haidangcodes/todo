@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --white: #ffffff;
+            --coral: #E07A5F;
+            --coral-light: #F2CC8F;
+            --peach: #F4A261;
+            --cream: #FFF8F0;
+            --dark: #1a1a1a;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+            --text-muted: #9ca3af;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .bg-shape:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, var(--coral), var(--peach));
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .bg-shape:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--peach), var(--coral-light));
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .bg-shape:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: var(--coral-light);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        .bg-shape:nth-child(4) {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--coral-light), var(--peach));
+            top: 20%;
+            right: 10%;
+            animation-delay: -15s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(30px, -30px) rotate(5deg) scale(1.05);
+            }
+            50% {
+                transform: translate(-20px, 20px) rotate(-5deg) scale(0.95);
+            }
+            75% {
+                transform: translate(20px, 10px) rotate(3deg) scale(1.02);
+            }
+        }
+
+        /* Mouse glow */
+        .glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(224, 122, 95, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 700px;
+            width: 90%;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(224, 122, 95, 0.15);
+            animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .login__logo {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--coral);
+            margin-bottom: 16px;
+            text-decoration: none;
+        }
+
+        .login__title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 400;
+            color: var(--dark);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .login__subtitle {
+            font-size: 1rem;
+            color: var(--gray);
+            max-width: 350px;
+            margin: 0 auto 32px;
+        }
+
+        /* Login Methods Row */
+        .login-methods {
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .login-method {
+            flex: 1;
+            padding: 24px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: var(--white);
+        }
+
+        .login-method h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: var(--white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--coral);
+            box-shadow: 0 0 0 4px rgba(224, 122, 95, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--peach) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(224, 122, 95, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(224, 122, 95, 0.4);
+        }
+
+        /* Google Button */
+        .btn-google {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--white);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .btn-google:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-color: var(--coral);
+        }
+
+        .btn-google svg {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-google:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* Loading state */
+        .btn-google.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-google.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error message */
+        .error-message {
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .signup-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 12px;
+        }
+
+        .signup-text a {
+            color: var(--coral);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .login-methods {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .login-container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+
+    <!-- Mouse Glow Effect -->
+    <div class="glow" id="glow"></div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <a href="/" class="login__logo">Workspace</a>
+
+        <h1 class="login__title">Welcome back</h1>
+        <p class="login__subtitle">Sign in to access your tasks and stay organized</p>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="login-methods">
+            <!-- Email/Password Login -->
+            <div class="login-method">
+                <h3 id="emailFormTitle">Sign in with Email</h3>
+                <form id="loginForm" onsubmit="handleEmailAuth(event)">
+                    <div class="form-group" id="nameFieldGroup" style="display:none;">
+                        <input type="text" id="name" class="form-input" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" class="form-input" placeholder="Email address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" class="form-input" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="emailSubmitBtn">Sign In</button>
+                </form>
+                <p class="signup-text" id="toggleAuthText">
+                    Don't have an account? <a href="#" onclick="toggleAuthMode(); return false;">Sign up</a>
+                </p>
+            </div>
+
+            <!-- Google Sign In -->
+            <div class="login-method">
+                <h3>Sign in with Google</h3>
+                <button class="btn-google" id="googleLoginBtn" onclick="loginWithGoogle()">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+                <p class="signup-text">
+                    Or <a href="#" onclick="loginWithGoogle(); return false;">sign up with Google</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mouse glow effect
+        const glow = document.getElementById('glow');
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateGlow() {
+            glowX += (mouseX - glowX) * 0.1;
+            glowY += (mouseY - glowY) * 0.1;
+            glow.style.left = glowX + 'px';
+            glow.style.top = glowY + 'px';
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
+
+        // Check if already logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me', { credentials: 'include' });
+                if (!response.ok) throw new Error('Auth check failed');
+                const data = await response.json();
+                if (data.authenticated) {
+                    window.location.href = '/app';
+                }
+            } catch (error) {
+                console.log('Not logged in');
+            }
+        }
+
+        // Handle email login - redirect to Google sign in
+        let isSignUp = false;
+
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            const title = document.getElementById('emailFormTitle');
+            const btn = document.getElementById('emailSubmitBtn');
+            const toggleText = document.getElementById('toggleAuthText');
+            const nameField = document.getElementById('nameFieldGroup');
+
+            if (isSignUp) {
+                title.textContent = 'Sign up with Email';
+                btn.textContent = 'Sign Up';
+                toggleText.innerHTML = 'Already have an account? <a href="#" onclick="toggleAuthMode(); return false;">Sign in</a>';
+                nameField.style.display = 'block';
+            } else {
+                title.textContent = 'Sign in with Email';
+                btn.textContent = 'Sign In';
+                toggleText.innerHTML = 'Don\'t have an account? <a href="#" onclick="toggleAuthMode(); return false;">Sign up</a>';
+                nameField.style.display = 'none';
+            }
+        }
+
+        async function handleEmailAuth(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const errorEl = document.getElementById('errorMessage');
+
+            if (!email || !password) {
+                errorEl.textContent = 'Email và password không được trống.';
+                errorEl.classList.add('show');
+                setTimeout(() => errorEl.classList.remove('show'), 3000);
+                return;
+            }
+
+            const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login';
+            const body = isSignUp ? { email, password, name } : { email, password };
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    errorEl.textContent = data.error;
+                    errorEl.classList.add('show');
+                    setTimeout(() => errorEl.classList.remove('show'), 3000);
+                } else {
+                    window.location.href = '/app';
+                }
+            } catch (e) {
+                errorEl.textContent = 'Đã xảy ra lỗi. Thử lại.';
+                errorEl.classList.add('show');
+                setTimeout(() => errorEl.classList.remove('show'), 3000);
+            }
+        }
+
+        // Login with Google
+        async function loginWithGoogle() {
+            const btn = document.getElementById('googleLoginBtn');
+            const errorEl = document.getElementById('errorMessage');
+
+            btn.classList.add('loading');
+            btn.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>Redirecting...</span>
+            `;
+            errorEl.classList.remove('show');
+
+            try {
+                // Get Google OAuth URL
+                const googleUrlResponse = await fetch('/api/auth/google-url');
+                const googleUrlData = await googleUrlResponse.json();
+
+                if (googleUrlData.error) {
+                    throw new Error(googleUrlData.error);
+                }
+
+                // Redirect to Google
+                window.location.href = googleUrlData.url;
+            } catch (error) {
+                btn.classList.remove('loading');
+                btn.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                `;
+                errorEl.textContent = 'Failed to connect to Google. Please try again.';
+                errorEl.classList.add('show');
+            }
+        }
+
+        // Check for error in URL (OAuth callback error)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error')) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = 'Sign in was cancelled or failed. Please try again.';
+            errorEl.classList.add('show');
+        }
+
+        // Check auth on load
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/service/EmailService.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/entity/User.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/config/CorsConfig.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/entity/Task.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/controller/AIController.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/controller/WelcomeController.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/entity/Subtask.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/controller/TaskController.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/service/TaskService.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/scheduler/ReminderScheduler.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/repository/UserRepository.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/TodoApplication.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/controller/AuthController.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/config/SecurityConfig.java
+/Users/dang/Documents/codes/ToDo/src/main/java/com/todo/repository/TaskRepository.java
